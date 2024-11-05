@@ -50,13 +50,12 @@ handleInput (EventKey (Char '5') Down _ _) (CanonSelect Player2 (Just p1Cannon) 
 -- Selección de escenarios
 handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just TorresGemelas) p2Scenario
 handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just MurallaChina) p2Scenario
-handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just MuroBerlin) p2Scenario
-handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just TorresPaine) p2Scenario
+handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just MuroDeBerlin) p2Scenario
+handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just TorresDelPaine) p2Scenario
 handleInput (EventKey (Char '5') Down _ _) (ScenarioSelect Player1 _ p2Scenario) = ScenarioSelect Player2 (Just TorreEiffel) p2Scenario
 -- Al seleccionar el escenario para el jugador 2, selecciona aleatoriamente entre los dos escenarios elegidos
-handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player2 (Just p1Scenario) _) = NextScreen p1Scenario p1Scenario undefined -- placeholder
-
+-- handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player2 (Just p1Scenario) _) = NextScreen p1Scenario p1Scenario undefined -- placeholder
 handleInput _ state = state
 
 update :: Float -> GameState -> GameState
-update _ state =
+update _ state = state
