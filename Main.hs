@@ -1,10 +1,9 @@
-module Main where
 
 import Graphics.Gloss.Interface.Pure.Game
 import Menu
 import NextScreen
-import CanonSelect (drawCanonSelect, drawCanonSelectionScreen, drawSelectionSummary)
-import ScenarioSelect (drawScenarioSelect, drawScenarioSelectionScreen, drawScenarioSummary, randomSelectScenario)
+import CanonSelect (drawCanonSelectionScreen, drawSelectionSummary)
+import ScenarioSelect (drawScenarioSelectionScreen, drawScenarioSummary, randomSelectScenario)
 import Types (CannonType(..), Player(..), ScenarioType(..))
 
 data GameState = Menu 
@@ -15,7 +14,7 @@ data GameState = Menu
 main :: IO ()
 main = do
   play
-    (InWindow "Pantalla" (800, 600) (100, 100))
+    (InWindow "Pantalla" (1280, 720) (100, 100))
     white
     60
     Menu
@@ -36,11 +35,10 @@ handleInput (EventKey (SpecialKey KeyEnter) Down _ _) Menu = CanonSelect Player1
 handleInput (EventKey (Char 'q') Down _ _) (CanonSelect _ _ _) = Menu
 handleInput (EventKey (Char 'q') Down _ _) (ScenarioSelect _ _ _) = Menu
 -- Selección de cañones
-handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just USA) p2Cannon
-handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Italiano) p2Cannon
-handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Frances) p2Cannon
-handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Aleman) p2Cannon
-handleInput (EventKey (Char '5') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Chileno) p2Cannon
+handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Nazi) p2Cannon
+handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Comunista) p2Cannon
+handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just Vaticano) p2Cannon
+handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player1 _ p2Cannon) = CanonSelect Player2 (Just EEUU) p2Cannon
 -- Cuando el jugador 2 selecciona su cañón, pasa a la selección de escenario
 handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player2 (Just p1Cannon) _) = ScenarioSelect Player1 Nothing Nothing
 handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player2 (Just p1Cannon) _) = ScenarioSelect Player1 Nothing Nothing

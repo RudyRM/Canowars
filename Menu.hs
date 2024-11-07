@@ -5,9 +5,17 @@ import System.IO.Unsafe (unsafePerformIO)
 
 drawMenu :: Picture
 drawMenu = Pictures
-  [ Translate (-300) 0 (Scale 0.5 0.5 (Text "Presiona Enter para continuar"))
-  , image
+  [ 
+    Translate 0 0 (Scale 0.675 0.675 fondo),
+    Translate 0 (50) (Scale 0.9 0.9 logo),
+    Translate 0 (-75) (Scale 0.25 0.25 texto)
   ]
 
-image :: Picture
-image = unsafePerformIO $ loadBMP "assets/menu.bmp"  -- Carga la imagen desde assets
+fondo :: Picture
+fondo = unsafePerformIO $ loadBMP "assets/fondos/War1/Pale/War.bmp"
+
+logo :: Picture
+logo = unsafePerformIO $ loadBMP "assets/logo.bmp"
+
+texto :: Picture
+texto = unsafePerformIO $ loadBMP "assets/pulsa.bmp"
