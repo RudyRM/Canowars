@@ -1,20 +1,45 @@
 module ScenarioSelect (drawScenarioSelect, drawScenarioSelectionScreen, drawScenarioSummary, randomSelectScenario) where
 
 import Graphics.Gloss
+import System.IO.Unsafe (unsafePerformIO)
 import System.Random (randomRIO) -- Importa randomRIO para la selección aleatoria
 import Types (Player(..), ScenarioType(..)) -- Importa Player y ScenarioType
 
 -- Dibuja la pantalla de selección de escenarios
 drawScenarioSelect :: Picture
 drawScenarioSelect = Pictures
-  [ Translate (-300) 100 (Scale 0.5 0.5 (Text "Seleccione el escenario"))
-  , Translate (-300) 50 (Scale 0.4 0.4 (Text "Presiona '1' para seleccionar escenario Torres Gemelas"))
-  , Translate (-300) 0   (Scale 0.4 0.4 (Text "Presiona '2' para seleccionar escenario Muralla China"))
-  , Translate (-300) (-50) (Scale 0.4 0.4 (Text "Presiona '3' para seleccionar escenario Muro de Berlin"))
-  , Translate (-300) (-100) (Scale 0.4 0.4 (Text "Presiona '4' para seleccionar escenario Torres del paine"))
-  , Translate (-300) (-150) (Scale 0.4 0.4 (Text "Presiona '5' para seleccionar escenario Torre Eiffel"))
-  , Translate (-300) (-200) (Scale 0.3 0.3 (Text "Presiona 'q' para volver al menu"))
+  [ 
+    Translate 0 0 (Scale 0.675 0.675 fondo)
+  , Translate (-200) 50 (Scale 0.1 0.1 mapa_1)
+  , Translate 200 50 (Scale 0.1 0.1 mapa_2)
+  , Translate (-200) (-200) (Scale 0.1 0.1 mapa_3)
+  , Translate 200 (-200) (Scale 0.1 0.1 mapa_4)
+  , Translate (-205) (-30) (Scale 0.275 0.275 num_1)
+  , Translate 195 (-30) (Scale 0.275 0.275 num_2)
+  , Translate (-205) (-280) (Scale 0.275 0.275 num_3)
+  , Translate 195 (-280) (Scale 0.275 0.275 num_4)
   ]
+
+fondo :: Picture
+fondo = unsafePerformIO $ loadBMP "assets/fondos/War3/Pale/War3.bmp"
+
+mapa_1 :: Picture
+mapa_1 = unsafePerformIO $ loadBMP "assets/fondos/War1/Bright/War.bmp"
+mapa_2 :: Picture
+mapa_2 = unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/War2.bmp"
+mapa_3 :: Picture
+mapa_3 = unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/War3.bmp"
+mapa_4 :: Picture
+mapa_4 = unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp"
+
+num_1 :: Picture
+num_1 = unsafePerformIO $ loadBMP "assets/1.bmp"
+num_2 :: Picture
+num_2 = unsafePerformIO $ loadBMP "assets/2.bmp"
+num_3 :: Picture
+num_3 = unsafePerformIO $ loadBMP "assets/3.bmp"
+num_4 :: Picture
+num_4 = unsafePerformIO $ loadBMP "assets/4.bmp"
 
 -- Dibuja la pantalla de selección de escenario para un jugador
 drawScenarioSelectionScreen :: Player -> Picture

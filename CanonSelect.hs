@@ -1,8 +1,7 @@
-module CanonSelect (drawCanonSelectionScreen, drawSelectionSummary) where
+module CanonSelect (drawCanonSelectionScreen) where
 
 import Graphics.Gloss
 import System.IO.Unsafe (unsafePerformIO)
-import Types (Player(..), CannonType(..)) -- Importa Player y CannonType
 
 drawCanonSelectionScreen :: Picture
 drawCanonSelectionScreen = Pictures
@@ -17,14 +16,6 @@ drawCanonSelectionScreen = Pictures
   , Translate 195 (-30) (Scale 0.275 0.275 num_2)
   , Translate (-205) (-280) (Scale 0.275 0.275 num_3)
   , Translate 195 (-280) (Scale 0.275 0.275 num_4)
-  ]
-
-drawSelectionSummary :: CannonType -> CannonType -> Picture
-drawSelectionSummary p1Cannon p2Cannon = Pictures
-  [ Translate (-300) 100 (Scale 0.5 0.5 (Text "Resumen de Seleccion"))
-  , Translate (-300) 50 (Scale 0.4 0.4 (Text $ "Jugador 1 selecciono: " ++ show p1Cannon))
-  , Translate (-300) 0 (Scale 0.4 0.4 (Text $ "Jugador 2 selecciono: " ++ show p2Cannon))
-  , Translate (-300) (-50) (Scale 0.3 0.3 (Text "Presiona 'q' para volver al menu"))
   ]
 
 fondo :: Picture
