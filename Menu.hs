@@ -1,5 +1,6 @@
 module Menu (drawMenu) where
 
+import InGame (gameDisplay)
 import Graphics.Gloss
 import System.IO.Unsafe (unsafePerformIO)
 

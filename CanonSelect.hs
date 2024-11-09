@@ -4,8 +4,8 @@ import Graphics.Gloss
 import System.IO.Unsafe (unsafePerformIO)
 import Types (Player(..), CannonType(..)) -- Importa Player y CannonType
 
-drawCanonSelectionScreen :: Player -> Picture
-drawCanonSelectionScreen player = Pictures
+drawCanonSelectionScreen :: Picture
+drawCanonSelectionScreen = Pictures
   [ 
     Translate 0 0 (Scale 0.675 0.675 fondo)
   , Translate 0 250 (Scale 0.55 0.55 seleccion)
