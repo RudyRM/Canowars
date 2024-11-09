@@ -1,24 +1,25 @@
 module InGame (gameDisplay) where
 
 import Graphics.Gloss
-import Types (CannonType(..), ScenarioType (..))
+import Types (CannonType(..), ScenarioType (..), Jugador(..))
 
--- Se muestran unos humildes puntos ya que no pude poner una foto :D
-drawCannon :: CannonType -> Float -> Float -> Picture
-drawCannon Comunista      x y = translate x y (color red (circleSolid 20))
-drawCannon Nazi x y = translate x y (color black (circleSolid 20))
-drawCannon Vaticano  x y = translate x y (color yellow (circleSolid 20))
-drawCannon EEUU   x y = translate x y (color blue (circleSolid 20))
+drawCannon :: Jugador -> Float -> Float -> Picture
+drawCannon jugador x y = translate x y (scale 2 2 (sprite jugador)) --con scale 2 2 agrandamos la imagen un 200%
 
 -- Se dibuja la línea divisoria en el centro de la pantalla
 drawDivider :: Picture
-drawDivider = translate 0 0 (color black (line [(0, -600), (0, 600)]))
+drawDivider = translate 0 0 (color white (line [(0, -600), (0, 600)]))
 
-gameDisplay :: CannonType -> CannonType -> ScenarioType -> Picture
+-- Línea horizontal bajo los cañones
+drawDivider2 :: Picture
+drawDivider2 = translate 0 (-280) (color white (line [(-600, 0), (600, 0)]))
+
+gameDisplay :: Jugador -> Jugador -> Picture -> Picture
 gameDisplay p1Cannon p2Cannon escenario = 
   pictures [
-      drawCannon p1Cannon (-400) (-300),
-      drawCannon p2Cannon 400 (-300),
-      drawDivider
+      escenario,
+      drawCannon p1Cannon (-350) (-250),  -- Dibuja el sprite de Player1
+      drawCannon p2Cannon 350 (-250),     -- Dibuja el sprite de Player2
+      drawDivider,
+      drawDivider2
   ]
-

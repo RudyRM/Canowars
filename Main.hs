@@ -50,9 +50,9 @@ handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player2 (Just p1Cannon))
 handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
 -- Selección de escenarios
 handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War1/Bright/War.bmp")
-handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/Wa2.bmp")
-handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/Wa3.bmp")
-handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/Wa4.bmp")
+handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/War2.bmp")
+handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/War3.bmp")
+handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp")
 
 -- Al seleccionar el escenario para el jugador 2, selecciona aleatoriamente entre los dos escenarios elegidos
 -- handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player2 (Just p1Scenario) _) = NextScreen p1Scenario p1Scenario undefined -- placeholder
