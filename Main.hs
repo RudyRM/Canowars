@@ -7,7 +7,7 @@ import System.IO.Unsafe (unsafePerformIO)
 import InGame (gameDisplay)
 import CanonSelect (drawCanonSelectionScreen)
 import ScenarioSelect (drawScenarioSelect, drawScenarioSelectionScreen, drawScenarioSummary, randomSelectScenario)
-import Types (CannonType(..), Player(..), ScenarioType(..), Jugador(..))
+import Types (CannonType(..), Player(..), ScenarioType(..), Jugador(..), Proyectil(..))
 
 data GameState = Menu 
                 | CanonSelect Player (Maybe Jugador)
@@ -39,20 +39,31 @@ handleInput (EventKey (Char 'q') Down _ _) (CanonSelect _ _) = Menu
 handleInput (EventKey (Char 'q') Down _ _) (ScenarioSelect _ _) = Menu
 handleInput (EventKey (Char 'q') Down _ _) (InGame _ _ _) = Menu
 -- Selección de cañonesa
-handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
-handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
-handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
-handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
+handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
+handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
+handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
+handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
 -- Cuando el jugador 2 selecciona su cañón, pasa a la selección de escenario
-handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
-handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
-handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
-handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.0, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
+handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
+handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
+handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
+handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
 -- Selección de escenarios
 handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War1/Bright/War.bmp")
 handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/War2.bmp")
 handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/War3.bmp")
 handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp")
+
+handleInput (EventKey (Char 'w') Down _ _) (InGame p1Cannon p2Cannon escenario) =  
+  let nuevoP1Cannon = p1Cannon { angulo = angulo p1Cannon + 0.01 }
+  in InGame nuevoP1Cannon p2Cannon escenario
+handleInput (EventKey (Char 's') Down _ _) (InGame p1Cannon p2Cannon escenario) =
+  let nuevoP1Cannon = p1Cannon { angulo = angulo p1Cannon - 0.01 }
+  in InGame nuevoP1Cannon p2Cannon escenario
+
+handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame p1Cannon p2Cannon escenario) =
+  let nuevoP1Cannon = p1Cannon { proyectil = (Just (Proyectil { dañoProyectil = (daño p1Cannon), posXProyectil = (posX p1Cannon), posYProyectil = (-250), spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp") })) }
+  in InGame nuevoP1Cannon p2Cannon escenario
 
 -- Al seleccionar el escenario para el jugador 2, selecciona aleatoriamente entre los dos escenarios elegidos
 -- handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player2 (Just p1Scenario) _) = NextScreen p1Scenario p1Scenario undefined -- placeholder

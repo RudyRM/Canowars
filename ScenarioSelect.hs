@@ -33,13 +33,13 @@ mapa_4 :: Picture
 mapa_4 = unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp"
 
 num_1 :: Picture
-num_1 = unsafePerformIO $ loadBMP "assets/1.bmp"
+num_1 = unsafePerformIO $ loadBMP "assets/ui/1.bmp"
 num_2 :: Picture
-num_2 = unsafePerformIO $ loadBMP "assets/2.bmp"
+num_2 = unsafePerformIO $ loadBMP "assets/ui/2.bmp"
 num_3 :: Picture
-num_3 = unsafePerformIO $ loadBMP "assets/3.bmp"
+num_3 = unsafePerformIO $ loadBMP "assets/ui/3.bmp"
 num_4 :: Picture
-num_4 = unsafePerformIO $ loadBMP "assets/4.bmp"
+num_4 = unsafePerformIO $ loadBMP "assets/ui/4.bmp"
 
 -- Dibuja la pantalla de selección de escenario para un jugador
 drawScenarioSelectionScreen :: Player -> Picture

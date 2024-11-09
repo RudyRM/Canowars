@@ -22,7 +22,7 @@ fondo :: Picture
 fondo = unsafePerformIO $ loadBMP "assets/fondos/War2/Pale/War2.bmp"
 
 seleccion :: Picture
-seleccion = unsafePerformIO $ loadBMP "assets/seleccion.bmp"
+seleccion = unsafePerformIO $ loadBMP "assets/ui/seleccion.bmp"
 
 tanque_nazi :: Picture
 tanque_nazi = unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp"
@@ -34,10 +34,10 @@ tanque_eeuu :: Picture
 tanque_eeuu = unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp"
 
 num_1 :: Picture
-num_1 = unsafePerformIO $ loadBMP "assets/1.bmp"
+num_1 = unsafePerformIO $ loadBMP "assets/ui/1.bmp"
 num_2 :: Picture
-num_2 = unsafePerformIO $ loadBMP "assets/2.bmp"
+num_2 = unsafePerformIO $ loadBMP "assets/ui/2.bmp"
 num_3 :: Picture
-num_3 = unsafePerformIO $ loadBMP "assets/3.bmp"
+num_3 = unsafePerformIO $ loadBMP "assets/ui/3.bmp"
 num_4 :: Picture
-num_4 = unsafePerformIO $ loadBMP "assets/4.bmp"
+num_4 = unsafePerformIO $ loadBMP "assets/ui/4.bmp"

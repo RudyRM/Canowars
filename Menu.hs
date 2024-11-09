@@ -16,7 +16,7 @@ fondo :: Picture
 fondo = unsafePerformIO $ loadBMP "assets/fondos/War1/Pale/War.bmp"
 
 logo :: Picture
-logo = unsafePerformIO $ loadBMP "assets/logo.bmp"
+logo = unsafePerformIO $ loadBMP "assets/ui/logo.bmp"
 
 texto :: Picture
-texto = unsafePerformIO $ loadBMP "assets/pulsa.bmp"
+texto = unsafePerformIO $ loadBMP "assets/ui/pulsa.bmp"
