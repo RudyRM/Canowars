@@ -4,11 +4,6 @@ import Graphics.Gloss (Picture)
 data CannonType = Comunista | Nazi | Vaticano | EEUU deriving (Show, Eq)
 data Player = Player1 | Player2 deriving (Show, Eq)
 data ScenarioType = TorresGemelas | MurallaChina | MuroDeBerlin | TorresDelPaine deriving (Show)
-data Proyectil = Proyectil { posXProyectil :: Float
-                , posYProyectil :: Float
-                , dañoProyectil :: Int
-                , spriteProyectil :: Picture 
-                } deriving (Show, Eq)
 data Jugador = Jugador { vida :: Int
                         , daño :: Int
                         , crítico :: Float
@@ -18,4 +13,14 @@ data Jugador = Jugador { vida :: Int
                         , sprite :: Picture
                         , proyectil :: Maybe Proyectil
                         } deriving (Show, Eq)
+
+
+data Proyectil = Proyectil { 
+    posXProyectil :: Float,
+    posYProyectil :: Float,
+    velocidadX :: Float,
+    velocidadY :: Float,
+    dañoProyectil :: Int,
+    spriteProyectil :: Picture 
+} deriving (Show, Eq)
 
