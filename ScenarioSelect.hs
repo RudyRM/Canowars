@@ -3,7 +3,7 @@ module ScenarioSelect (drawScenarioSelect, drawScenarioSelectionScreen, drawScen
 import Graphics.Gloss
 import System.IO.Unsafe (unsafePerformIO)
 import System.Random (randomRIO) -- Importa randomRIO para la selección aleatoria
-import Types (Player(..), ScenarioType(..)) -- Importa Player y ScenarioType
+import Types (Turno(..), ScenarioType(..)) -- Importa Player y ScenarioType
 
 -- Dibuja la pantalla de selección de escenarios
 drawScenarioSelect :: Picture
@@ -42,7 +42,7 @@ num_4 :: Picture
 num_4 = unsafePerformIO $ loadBMP "assets/ui/4.bmp"
 
 -- Dibuja la pantalla de selección de escenario para un jugador
-drawScenarioSelectionScreen :: Player -> Picture
+drawScenarioSelectionScreen :: Turno -> Picture
 drawScenarioSelectionScreen player = Pictures
   [ Translate (-300) 150 (Scale 0.5 0.5 (Text ("Seleccione su escenario - " ++ show player)))
   , Translate (-300) 50 (Scale 0.4 0.4 (Text "Presiona '1' para Escenario Torres Gemelas"))

@@ -1,18 +1,18 @@
-
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss
 import Menu
 import NextScreen
+import Disparo
 import System.IO.Unsafe (unsafePerformIO)
 import InGame (gameDisplay)
 import CanonSelect (drawCanonSelectionScreen)
 import ScenarioSelect (drawScenarioSelect, drawScenarioSelectionScreen, drawScenarioSummary, randomSelectScenario)
-import Types (CannonType(..), Player(..), ScenarioType(..), Jugador(..), Proyectil(..))
+import Types (CannonType(..), Turno(..), ScenarioType(..), Jugador(..), Proyectil(..))
 
 data GameState = Menu 
-                | CanonSelect Player (Maybe Jugador)
+                | CanonSelect Turno (Maybe Jugador)
                 | ScenarioSelect Jugador Jugador
-                | InGame Jugador Jugador Picture
+                | InGame Turno Jugador Jugador Picture (Maybe Proyectil) (Bool, Bool, Bool, Bool)  -- (upPressed, downPressed)
 
 main :: IO ()
 main = do
@@ -29,45 +29,135 @@ draw :: GameState -> Picture
 draw Menu = drawMenu
 draw (CanonSelect _ _) = drawCanonSelectionScreen
 draw (ScenarioSelect _ _) = drawScenarioSelect
-draw (InGame p1Cannon p2Cannon escenario) = gameDisplay p1Cannon p2Cannon escenario
+draw (InGame turno p1Cannon p2Cannon escenario proyectil movimiento) = gameDisplay turno p1Cannon p2Cannon escenario proyectil
 
 handleInput :: Event -> GameState -> GameState
 -- Transición al modo de selección de cañones desde el menú
-handleInput (EventKey (SpecialKey KeyEnter) Down _ _) Menu = CanonSelect Player1 Nothing
+handleInput (EventKey (SpecialKey KeyEnter) Down _ _) Menu = CanonSelect Jugador1 Nothing
 -- Volver al menú desde la selección de cañones o escenarios
 handleInput (EventKey (Char 'q') Down _ _) (CanonSelect _ _) = Menu
 handleInput (EventKey (Char 'q') Down _ _) (ScenarioSelect _ _) = Menu
-handleInput (EventKey (Char 'q') Down _ _) (InGame _ _ _) = Menu
+handleInput (EventKey (Char 'q') Down _ _) (InGame _ _ _ _ _ _) = Menu
 -- Selección de cañonesa
-handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
-handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
-handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
-handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player1 _) = CanonSelect Player2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
+handleInput (EventKey (Char '1') Down _ _) (CanonSelect Jugador1 _) = CanonSelect Jugador2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
+handleInput (EventKey (Char '2') Down _ _) (CanonSelect Jugador1 _) = CanonSelect Jugador2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
+handleInput (EventKey (Char '3') Down _ _) (CanonSelect Jugador1 _) = CanonSelect Jugador2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
+handleInput (EventKey (Char '4') Down _ _) (CanonSelect Jugador1 _) = CanonSelect Jugador2 (Just Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = -350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
 -- Cuando el jugador 2 selecciona su cañón, pasa a la selección de escenario
-handleInput (EventKey (Char '1') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
-handleInput (EventKey (Char '2') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
-handleInput (EventKey (Char '3') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
-handleInput (EventKey (Char '4') Down _ _) (CanonSelect Player2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = 0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
+handleInput (EventKey (Char '1') Down _ _) (CanonSelect Jugador2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = -0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_nazi.bmp")})
+handleInput (EventKey (Char '2') Down _ _) (CanonSelect Jugador2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = -0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_comunista.bmp")})
+handleInput (EventKey (Char '3') Down _ _) (CanonSelect Jugador2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = -0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_vaticano.bmp")})
+handleInput (EventKey (Char '4') Down _ _) (CanonSelect Jugador2 (Just p1Cannon)) = ScenarioSelect p1Cannon (Jugador { vida = 100, daño = 50, crítico = 0.25, combustible = 80, angulo = -0.9, proyectil = Nothing, posX = 350, sprite = (unsafePerformIO $ loadBMP "assets/tanques/tank_eeuu.bmp")})
 -- Selección de escenarios
-handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War1/Bright/War.bmp")
-handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/War2.bmp")
-handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/War3.bmp")
-handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp")
+handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame Jugador1 p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War1/Bright/War.bmp") Nothing (False, False, False, False)
+handleInput (EventKey (Char '2') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame Jugador1 p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War2/Bright/War2.bmp") Nothing (False, False, False, False)
+handleInput (EventKey (Char '3') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame Jugador1 p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War3/Bright/War3.bmp") Nothing (False, False, False, False)
+handleInput (EventKey (Char '4') Down _ _) (ScenarioSelect p1Cannon p2Cannon) = InGame Jugador1 p1Cannon p2Cannon (unsafePerformIO $ loadBMP "assets/fondos/War4/Bright/War4.bmp") Nothing (False, False, False, False)
 
-handleInput (EventKey (Char 'w') Down _ _) (InGame p1Cannon p2Cannon escenario) =  
-  let nuevoP1Cannon = p1Cannon { angulo = angulo p1Cannon + 0.01 }
-  in InGame nuevoP1Cannon p2Cannon escenario
-handleInput (EventKey (Char 's') Down _ _) (InGame p1Cannon p2Cannon escenario) =
-  let nuevoP1Cannon = p1Cannon { angulo = angulo p1Cannon - 0.01 }
-  in InGame nuevoP1Cannon p2Cannon escenario
+handleInput (EventKey (Char 'w') Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (_, downPressed, leftPressed, rightPressed)) = 
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (True, downPressed, leftPressed, rightPressed)
+handleInput (EventKey (Char 'w') Up _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (_, downPressed, leftPressed, rightPressed)) = 
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (False, downPressed, leftPressed, rightPressed)
+handleInput (EventKey (Char 's') Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, _, leftPressed, rightPressed)) = 
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, True, leftPressed, rightPressed)
+handleInput (EventKey (Char 's') Up _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, _, leftPressed, rightPressed)) = 
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, False, leftPressed, rightPressed)
 
-handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame p1Cannon p2Cannon escenario) =
-  let nuevoP1Cannon = p1Cannon { proyectil = (Just (Proyectil { dañoProyectil = (daño p1Cannon), posXProyectil = (posX p1Cannon), posYProyectil = (-250), spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp") })) }
-  in InGame nuevoP1Cannon p2Cannon escenario
+handleInput (EventKey (Char 'a') Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, _, rightPressed)) =  
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, True, rightPressed)
+handleInput (EventKey (Char 'a') Up _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, _, rightPressed)) =  
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, False, rightPressed)
+handleInput (EventKey (Char 'd') Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, _)) =  
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, True)
+handleInput (EventKey (Char 'd') Up _ _) (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, _)) =  
+  InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, False)
 
--- Al seleccionar el escenario para el jugador 2, selecciona aleatoriamente entre los dos escenarios elegidos
--- handleInput (EventKey (Char '1') Down _ _) (ScenarioSelect Player2 (Just p1Scenario) _) = NextScreen p1Scenario p1Scenario undefined -- placeholder
+handleInput (EventKey (Char 'i') Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (_, downPressed, leftPressed, rightPressed)) = 
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (True, downPressed, leftPressed, rightPressed)
+handleInput (EventKey (Char 'i') Up _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (_, downPressed, leftPressed, rightPressed)) = 
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (False, downPressed, leftPressed, rightPressed)
+handleInput (EventKey (Char 'k') Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, _, leftPressed, rightPressed)) = 
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, True, leftPressed, rightPressed)
+handleInput (EventKey (Char 'k') Up _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, _, leftPressed, rightPressed)) = 
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, False, leftPressed, rightPressed)
+
+handleInput (EventKey (Char 'j') Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, _, rightPressed)) =  
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, True, rightPressed)
+handleInput (EventKey (Char 'j') Up _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, _, rightPressed)) =  
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, False, rightPressed)
+handleInput (EventKey (Char 'l') Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, _)) =  
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, True)
+handleInput (EventKey (Char 'l') Up _ _) (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, _)) =  
+  InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, False)
+
+handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario Nothing _) =
+  InGame Jugador1 p1Cannon p2Cannon escenario 
+    (Just (Proyectil { dañoProyectil = (daño p1Cannon), 
+      posXProyectil = (posX p1Cannon), 
+      posYProyectil = (-250), 
+      spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
+      anguloProyectil = angulo p1Cannon  -- Guarda el ángulo inicial aquí
+    })) (False, False, False, False)
+
+handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario Nothing _) =
+  InGame Jugador2 p1Cannon p2Cannon escenario 
+    (Just (Proyectil { dañoProyectil = (daño p2Cannon), 
+      posXProyectil = (posX p2Cannon), 
+      posYProyectil = (-250), 
+      spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
+      anguloProyectil = angulo p2Cannon  -- Guarda el ángulo inicial aquí
+    })) (False, False, False, False)
+
 handleInput _ state = state
 
+-- Actualización del estado del juego
 update :: Float -> GameState -> GameState
+update _ (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
+  let 
+    -- Ajuste de ángulo cuando 'w' o 's' están presionadas
+    nuevoAngulo = if upPressed then angulo p1Cannon + 0.01
+      else if downPressed then angulo p1Cannon - 0.01
+      else angulo p1Cannon
+    nuevaPosX = if leftPressed then posX p1Cannon - 5
+      else if rightPressed then posX p1Cannon + 5
+      else posX p1Cannon
+    nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p1Cannon - 1
+      else combustible p1Cannon
+    nuevoP1Cannon = p1Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
+    -- Movimiento del proyectil en parábola usando el ángulo inicial guardado
+    nuevoProyectil = case proyectil of
+      Just p | posYProyectil p >= -250 -> Just p { 
+        posXProyectil = (posXProyectil p + 2 + (abs (posXProyectil p))*0.01),
+        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posX p1Cannon) (-250)
+      }
+      _ -> Nothing
+  in if nuevoCombustible == 0 
+    then InGame Jugador2 (nuevoP1Cannon { combustible = 60 }) p2Cannon escenario nuevoProyectil (False, False, False, False)
+    else InGame Jugador1 nuevoP1Cannon p2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
+
+
+update _ (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
+  let 
+    -- Ajuste de ángulo cuando 'w' o 's' están presionadas
+    nuevoAngulo = if upPressed then angulo p2Cannon + 0.01
+      else if downPressed then angulo p2Cannon - 0.01
+      else angulo p2Cannon
+    nuevaPosX = if leftPressed then posX p2Cannon - 5
+      else if rightPressed then posX p2Cannon + 5
+      else posX p2Cannon
+    nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p2Cannon - 1
+      else combustible p1Cannon
+    nuevoP2Cannon = p2Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
+    -- Movimiento del proyectil en parábola usando el ángulo inicial guardado
+    nuevoProyectil = case proyectil of
+      Just p | posYProyectil p >= -250 -> Just p { 
+        posXProyectil = (posXProyectil p - 2 - (abs (posXProyectil p))*0.01),
+        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posX p2Cannon) (-250) 
+      }
+      _ -> Nothing
+  in if (combustible nuevoP2Cannon == 0) 
+    then InGame Jugador1 p1Cannon (nuevoP2Cannon { combustible = 60 }) escenario nuevoProyectil (False, False, False, False)
+    else InGame Jugador2 p1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
+
+-- Otros estados no cambian en el tiempo
 update _ state = state
