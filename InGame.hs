@@ -1,6 +1,7 @@
 module InGame (gameDisplay) where
 
 import Disparo
+import System.IO.Unsafe (unsafePerformIO)
 import Data.Maybe (isNothing, fromJust)
 import Graphics.Gloss
 import Types (CannonType(..), ScenarioType (..), Jugador(..), Proyectil(..), Turno(..))
@@ -15,7 +16,10 @@ drawDivider = translate 0 0 (color white (line [(0, -600), (0, 600)]))
 
 -- Línea horizontal bajo los cañones
 drawDivider2 :: Picture
-drawDivider2 = translate 0 (-280) (color white (line [(-600, 0), (600, 0)]))
+drawDivider2 = Translate 0 (-125) (Scale 0.5 0.5 pared)
+
+pared :: Picture
+pared = unsafePerformIO $ loadBMP "assets/fondos/pared.bmp"
 
 -- Función que dibuja un punto individual
 drawPoint :: (Float, Float) -> Picture

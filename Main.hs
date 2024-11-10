@@ -3,6 +3,7 @@ import Graphics.Gloss
 import Menu
 import NextScreen
 import Disparo
+import System.Random
 import System.IO.Unsafe (unsafePerformIO)
 import InGame (gameDisplay)
 import CanonSelect (drawCanonSelectionScreen)
@@ -91,14 +92,16 @@ handleInput (EventKey (Char 'l') Up _ _) (InGame Jugador2 p1Cannon p2Cannon esce
   InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, False)
 
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario Nothing _) =
-  InGame Jugador1 p1Cannon p2Cannon escenario 
-    (Just (Proyectil { dañoProyectil = (daño p1Cannon), 
-      posIniX = (posX p1Cannon),
-      posXProyectil = (posX p1Cannon), 
-      posYProyectil = (-250), 
-      spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
-      anguloProyectil = angulo p1Cannon  -- Guarda el ángulo inicial aquí
-    })) (False, False, False, False)
+  let daño = dañoProyectilRand (mkStdGen 0)
+      sprite = if daño < 4 then (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp") else (unsafePerformIO $ loadBMP "assets/tanques/proyectil_critico.bmp")
+  in InGame Jugador1 p1Cannon p2Cannon escenario 
+      (Just (Proyectil { dañoProyectil = daño, 
+        posIniX = (posX p1Cannon),
+        posXProyectil = (posX p1Cannon), 
+        posYProyectil = (-250), 
+        spriteProyectil = sprite,
+        anguloProyectil = angulo p1Cannon  -- Guarda el ángulo inicial aquí
+      })) (False, False, False, False)
 
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario Nothing _) =
   InGame Jugador2 p1Cannon p2Cannon escenario 
@@ -113,8 +116,8 @@ handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon 
 handleInput _ state = state
 
 movimientoIzquierda Jugador1 posX = max (-600) (posX - 5)
-movimientoIzquierda Jugador2 posX = max (40) (posX - 5)
-movimientoDerecha Jugador1 posX = min (-40) (posX + 5)
+movimientoIzquierda Jugador2 posX = max (80) (posX - 5)
+movimientoDerecha Jugador1 posX = min (-80) (posX + 5)
 movimientoDerecha Jugador2 posX = min (600) (posX + 5)
 
 -- Actualización del estado del juego
@@ -168,9 +171,9 @@ update _ (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, down
         posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250) 
       }
       _ -> Nothing
-      
+
   in if (combustible nuevoP2Cannon == 0) 
-    then InGame Jugador1 p1Cannon (nuevoP2Cannon { combustible = 60 }) escenario nuevoProyectil (False, False, False, False)
+    then InGame Jugador1 p1Cannon (nuevoP2Cannon { combustible = 150 }) escenario nuevoProyectil (False, False, False, False)
     else InGame Jugador2 p1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
 
 -- Otros estados no cambian en el tiempo
