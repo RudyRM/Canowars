@@ -17,6 +17,18 @@ drawDivider = translate 0 0 (color white (line [(0, -600), (0, 600)]))
 drawDivider2 :: Picture
 drawDivider2 = translate 0 (-280) (color white (line [(-600, 0), (600, 0)]))
 
+drawFuel :: Jugador -> Float -> Picture
+drawFuel jugador x =
+  let fuelPercentage = (fromIntegral (combustible jugador) / 100) * 100
+      fuelText = "Fuel: " ++ show (round fuelPercentage) ++ "%"
+  in translate x 320 (scale 0.3 0.3 (color black (text fuelText)))
+
+drawHP:: Jugador -> Float -> Picture
+drawHP jugador x =
+  let hpPercentage = (fromIntegral (vida jugador) / 100) * 100
+      hptext = "HP: " ++ show (round hpPercentage) ++ "%"
+  in translate x 320 (scale 0.3 0.3 (color white (text hptext)))
+
 -- Función que dibuja un punto individual
 drawPoint :: (Float, Float) -> Picture
 drawPoint (x, y) = Translate x y (Color white (Circle 3))  -- Usamos un círculo pequeño como punto
@@ -34,7 +46,11 @@ gameDisplay turno p1Cannon p2Cannon escenario proyectil =
                -- Puntos de la parábola para mostrar trayectoria (opcional)
                 pictures (map drawPoint (parabolaPoints (posX selectCanon) (-250) (angulo selectCanon) (if turno == Jugador1 then 1 else (-1)))),
                drawDivider,
-               drawDivider2
+               drawDivider2,
+               drawFuel p1Cannon (-600),
+               drawFuel p2Cannon (440),
+               drawHP p1Cannon (-300),
+               drawHP p2Cannon (150)
              ]
     Nothing -> pictures [
                 Translate 0 0 (Scale 0.675 0.675 escenario),
@@ -43,5 +59,9 @@ gameDisplay turno p1Cannon p2Cannon escenario proyectil =
                 -- Traza la parábola inicial sin proyectil
                 pictures (map drawPoint (parabolaPoints (posX selectCanon) (-250) (angulo selectCanon) (if turno == Jugador1 then 1 else (-1)))),
                 drawDivider,
-                drawDivider2
+                drawDivider2,
+                drawFuel p1Cannon (-600),
+                drawFuel p2Cannon (440),
+                drawHP p1Cannon (-300),
+                drawHP p2Cannon (150)
               ]
