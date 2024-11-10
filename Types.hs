@@ -6,6 +6,7 @@ data Turno = Jugador1 | Jugador2 deriving (Show, Eq)
 data ScenarioType = TorresGemelas | MurallaChina | MuroDeBerlin | TorresDelPaine deriving (Show)
 data Proyectil = Proyectil {
     dañoProyectil :: Int,
+    posIniX :: Float,
     posXProyectil :: Float,
     posYProyectil :: Float,
     spriteProyectil :: Picture,

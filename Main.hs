@@ -93,6 +93,7 @@ handleInput (EventKey (Char 'l') Up _ _) (InGame Jugador2 p1Cannon p2Cannon esce
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario Nothing _) =
   InGame Jugador1 p1Cannon p2Cannon escenario 
     (Just (Proyectil { dañoProyectil = (daño p1Cannon), 
+      posIniX = (posX p1Cannon),
       posXProyectil = (posX p1Cannon), 
       posYProyectil = (-250), 
       spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
@@ -102,6 +103,7 @@ handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador1 p1Cannon 
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario Nothing _) =
   InGame Jugador2 p1Cannon p2Cannon escenario 
     (Just (Proyectil { dañoProyectil = (daño p2Cannon), 
+      posIniX = (posX p2Cannon),
       posXProyectil = (posX p2Cannon), 
       posYProyectil = (-250), 
       spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
@@ -110,29 +112,37 @@ handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon 
 
 handleInput _ state = state
 
+movimientoIzquierda Jugador1 posX = max (-600) (posX - 5)
+movimientoIzquierda Jugador2 posX = max (40) (posX - 5)
+movimientoDerecha Jugador1 posX = min (-40) (posX + 5)
+movimientoDerecha Jugador2 posX = min (600) (posX + 5)
+
 -- Actualización del estado del juego
 update :: Float -> GameState -> GameState
 update _ (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
   let 
-    -- Ajuste de ángulo cuando 'w' o 's' están presionadas
     nuevoAngulo = if upPressed then angulo p1Cannon + 0.01
       else if downPressed then angulo p1Cannon - 0.01
       else angulo p1Cannon
-    nuevaPosX = if leftPressed then posX p1Cannon - 5
-      else if rightPressed then posX p1Cannon + 5
+
+    nuevaPosX = if leftPressed then movimientoIzquierda Jugador1 (posX p1Cannon)
+      else if rightPressed then movimientoDerecha Jugador1 (posX p1Cannon)
       else posX p1Cannon
+
     nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p1Cannon - 1
       else combustible p1Cannon
+
     nuevoP1Cannon = p1Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
-    -- Movimiento del proyectil en parábola usando el ángulo inicial guardado
+
     nuevoProyectil = case proyectil of
       Just p | posYProyectil p >= -250 -> Just p { 
         posXProyectil = (posXProyectil p + 2 + (abs (posXProyectil p))*0.01),
-        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posX p1Cannon) (-250)
+        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250)
       }
       _ -> Nothing
+
   in if nuevoCombustible == 0 
-    then InGame Jugador2 (nuevoP1Cannon { combustible = 60 }) p2Cannon escenario nuevoProyectil (False, False, False, False)
+    then InGame Jugador2 (nuevoP1Cannon { combustible = 150 }) p2Cannon escenario nuevoProyectil (False, False, False, False)
     else InGame Jugador1 nuevoP1Cannon p2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
 
 
@@ -142,19 +152,23 @@ update _ (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, down
     nuevoAngulo = if upPressed then angulo p2Cannon + 0.01
       else if downPressed then angulo p2Cannon - 0.01
       else angulo p2Cannon
-    nuevaPosX = if leftPressed then posX p2Cannon - 5
-      else if rightPressed then posX p2Cannon + 5
+
+    nuevaPosX = if leftPressed then movimientoIzquierda Jugador2 (posX p2Cannon)
+      else if rightPressed then movimientoDerecha Jugador2 (posX p2Cannon)
       else posX p2Cannon
+
     nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p2Cannon - 1
       else combustible p1Cannon
+
     nuevoP2Cannon = p2Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
-    -- Movimiento del proyectil en parábola usando el ángulo inicial guardado
+
     nuevoProyectil = case proyectil of
       Just p | posYProyectil p >= -250 -> Just p { 
         posXProyectil = (posXProyectil p - 2 - (abs (posXProyectil p))*0.01),
-        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posX p2Cannon) (-250) 
+        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250) 
       }
       _ -> Nothing
+      
   in if (combustible nuevoP2Cannon == 0) 
     then InGame Jugador1 p1Cannon (nuevoP2Cannon { combustible = 60 }) escenario nuevoProyectil (False, False, False, False)
     else InGame Jugador2 p1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)

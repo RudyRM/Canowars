@@ -5,8 +5,9 @@ import Data.Maybe (isNothing, fromJust)
 import Graphics.Gloss
 import Types (CannonType(..), ScenarioType (..), Jugador(..), Proyectil(..), Turno(..))
 
-drawCannon :: Jugador -> Float -> Float -> Picture
-drawCannon jugador x y = translate x y (scale 2 2 (sprite jugador)) --con scale 2 2 agrandamos la imagen un 200%
+drawCannon :: Turno -> Jugador -> Float -> Float -> Picture
+drawCannon Jugador1 jugador x y = translate x y (scale 2 2 (sprite jugador)) --con scale 2 2 agrandamos la imagen un 200%
+drawCannon Jugador2 jugador x y = translate x y (scale (-2) 2 (sprite jugador)) --con scale 2 2 agrandamos la imagen un 200%
 
 -- Se dibuja la línea divisoria en el centro de la pantalla
 drawDivider :: Picture
@@ -26,8 +27,8 @@ gameDisplay turno p1Cannon p2Cannon escenario proyectil =
   in case proyectil of
     Just bala -> pictures [
                Translate 0 0 (Scale 0.675 0.675 escenario),
-               drawCannon p1Cannon (posX p1Cannon) (-250),
-               drawCannon p2Cannon (posX p2Cannon) (-250),
+               drawCannon Jugador1 p1Cannon (posX p1Cannon) (-250),
+               drawCannon Jugador2 p2Cannon (posX p2Cannon) (-250),
                -- Dibuja la bala en su nueva posición actualizada
                Translate (posXProyectil bala) (posYProyectil bala) (Scale 0.3 0.3 (spriteProyectil bala)),
                -- Puntos de la parábola para mostrar trayectoria (opcional)
@@ -37,8 +38,8 @@ gameDisplay turno p1Cannon p2Cannon escenario proyectil =
              ]
     Nothing -> pictures [
                 Translate 0 0 (Scale 0.675 0.675 escenario),
-                drawCannon p1Cannon (posX p1Cannon) (-250),
-                drawCannon p2Cannon (posX p2Cannon) (-250),
+                drawCannon Jugador1 p1Cannon (posX p1Cannon) (-250),
+                drawCannon Jugador2 p2Cannon (posX p2Cannon) (-250),
                 -- Traza la parábola inicial sin proyectil
                 pictures (map drawPoint (parabolaPoints (posX selectCanon) (-250) (angulo selectCanon) (if turno == Jugador1 then 1 else (-1)))),
                 drawDivider,
