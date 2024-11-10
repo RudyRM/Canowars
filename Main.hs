@@ -3,7 +3,6 @@ import Graphics.Gloss
 import Menu
 import NextScreen
 import Disparo
-import System.Random
 import System.IO.Unsafe (unsafePerformIO)
 import InGame (gameDisplay)
 import CanonSelect (drawCanonSelectionScreen)
@@ -92,16 +91,14 @@ handleInput (EventKey (Char 'l') Up _ _) (InGame Jugador2 p1Cannon p2Cannon esce
   InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, False)
 
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador1 p1Cannon p2Cannon escenario Nothing _) =
-  let daño = dañoProyectilRand (mkStdGen 0)
-      sprite = if daño < 4 then (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp") else (unsafePerformIO $ loadBMP "assets/tanques/proyectil_critico.bmp")
-  in InGame Jugador1 p1Cannon p2Cannon escenario 
-      (Just (Proyectil { dañoProyectil = daño, 
-        posIniX = (posX p1Cannon),
-        posXProyectil = (posX p1Cannon), 
-        posYProyectil = (-250), 
-        spriteProyectil = sprite,
-        anguloProyectil = angulo p1Cannon  -- Guarda el ángulo inicial aquí
-      })) (False, False, False, False)
+  InGame Jugador1 p1Cannon p2Cannon escenario 
+    (Just (Proyectil { dañoProyectil = (daño p1Cannon), 
+      posIniX = (posX p1Cannon),
+      posXProyectil = (posX p1Cannon), 
+      posYProyectil = (-250), 
+      spriteProyectil = (unsafePerformIO $ loadBMP "assets/tanques/proyectil.bmp"),
+      anguloProyectil = angulo p1Cannon  -- Guarda el ángulo inicial aquí
+    })) (False, False, False, False)
 
 handleInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame Jugador2 p1Cannon p2Cannon escenario Nothing _) =
   InGame Jugador2 p1Cannon p2Cannon escenario 
@@ -124,57 +121,79 @@ movimientoDerecha Jugador2 posX = min (600) (posX + 5)
 update :: Float -> GameState -> GameState
 update _ (InGame Jugador1 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
   let 
+    -- Actualizar el ángulo y posición de p1Cannon
     nuevoAngulo = if upPressed then angulo p1Cannon + 0.01
-      else if downPressed then angulo p1Cannon - 0.01
-      else angulo p1Cannon
+                  else if downPressed then angulo p1Cannon - 0.01
+                  else angulo p1Cannon
 
     nuevaPosX = if leftPressed then movimientoIzquierda Jugador1 (posX p1Cannon)
-      else if rightPressed then movimientoDerecha Jugador1 (posX p1Cannon)
-      else posX p1Cannon
+                else if rightPressed then movimientoDerecha Jugador1 (posX p1Cannon)
+                else posX p1Cannon
 
     nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p1Cannon - 1
-      else combustible p1Cannon
+                       else combustible p1Cannon
 
     nuevoP1Cannon = p1Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
 
+    -- Actualizar la posición del proyectil
     nuevoProyectil = case proyectil of
       Just p | posYProyectil p >= -250 -> Just p { 
-        posXProyectil = (posXProyectil p + 2 + (abs (posXProyectil p))*0.01),
+        posXProyectil = (posXProyectil p + 2 + (abs (posXProyectil p)) * 0.01),
         posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250)
       }
       _ -> Nothing
 
+    -- Verificar si el proyectil impacta el p2Cannon
+    p2CannonImpactado = case nuevoProyectil of
+      Just p | posXProyectil p >= (posX p2Cannon - 50) && posXProyectil p <= (posX p2Cannon + 50) -> True
+      _ -> False
+
+    -- Reducir el campo de vida de p2Cannon si es impactado
+    nuevoP2Cannon = if p2CannonImpactado
+                    then p2Cannon { vida = max 0 (vida p2Cannon - 1) }
+                    else p2Cannon
+
   in if nuevoCombustible == 0 
-    then InGame Jugador2 (nuevoP1Cannon { combustible = 150 }) p2Cannon escenario nuevoProyectil (False, False, False, False)
-    else InGame Jugador1 nuevoP1Cannon p2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
+    then InGame Jugador2 (nuevoP1Cannon { combustible = 150 }) nuevoP2Cannon escenario nuevoProyectil (False, False, False, False)
+    else InGame Jugador1 nuevoP1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
 
 
 update _ (InGame Jugador2 p1Cannon p2Cannon escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
   let 
-    -- Ajuste de ángulo cuando 'w' o 's' están presionadas
+    -- Actualizar el ángulo y posición de p2Cannon
     nuevoAngulo = if upPressed then angulo p2Cannon + 0.01
-      else if downPressed then angulo p2Cannon - 0.01
-      else angulo p2Cannon
+                  else if downPressed then angulo p2Cannon - 0.01
+                  else angulo p2Cannon
 
     nuevaPosX = if leftPressed then movimientoIzquierda Jugador2 (posX p2Cannon)
-      else if rightPressed then movimientoDerecha Jugador2 (posX p2Cannon)
-      else posX p2Cannon
+                else if rightPressed then movimientoDerecha Jugador2 (posX p2Cannon)
+                else posX p2Cannon
 
     nuevoCombustible = if upPressed || downPressed || leftPressed || rightPressed then combustible p2Cannon - 1
-      else combustible p1Cannon
+                       else combustible p2Cannon
 
     nuevoP2Cannon = p2Cannon { angulo = nuevoAngulo, combustible = nuevoCombustible, posX = nuevaPosX }
 
+    -- Actualizar la posición del proyectil
     nuevoProyectil = case proyectil of
       Just p | posYProyectil p >= -250 -> Just p { 
-        posXProyectil = (posXProyectil p - 2 - (abs (posXProyectil p))*0.01),
-        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250) 
+        posXProyectil = (posXProyectil p - 2 - (abs (posXProyectil p)) * 0.01),
+        posYProyectil = parabola (posXProyectil p) (anguloProyectil p) (posIniX p) (-250)
       }
       _ -> Nothing
 
-  in if (combustible nuevoP2Cannon == 0) 
-    then InGame Jugador1 p1Cannon (nuevoP2Cannon { combustible = 150 }) escenario nuevoProyectil (False, False, False, False)
-    else InGame Jugador2 p1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
+    -- Verificar si el proyectil impacta el p1Cannon
+    p1CannonImpactado = case nuevoProyectil of
+      Just p | posXProyectil p >= (posX p1Cannon - 50) && posXProyectil p <= (posX p1Cannon + 50) -> True
+      _ -> False
 
+    -- Reducir el campo de vida de p1Cannon si es impactado
+    nuevoP1Cannon = if p1CannonImpactado
+                    then p1Cannon { vida = max 0 (vida p1Cannon - 1) }
+                    else p1Cannon
+
+  in if nuevoCombustible == 0 
+    then InGame Jugador1 nuevoP1Cannon (nuevoP2Cannon { combustible = 150 }) escenario nuevoProyectil (False, False, False, False)
+    else InGame Jugador2 nuevoP1Cannon nuevoP2Cannon escenario nuevoProyectil (upPressed, downPressed, leftPressed, rightPressed)
 -- Otros estados no cambian en el tiempo
 update _ state = state
