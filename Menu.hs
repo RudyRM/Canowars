@@ -1,22 +1,21 @@
-module Menu (drawMenu) where
+module Menu (dibujarMenu) where
 
-import InGame (gameDisplay)
-import Graphics.Gloss
+import Graphics.Gloss (Picture (Scale, Translate, Pictures), loadBMP)
 import System.IO.Unsafe (unsafePerformIO)
 
-drawMenu :: Picture
-drawMenu = Pictures
+dibujarMenu :: Picture
+dibujarMenu = Pictures
   [ 
-    Translate 0 0 (Scale 0.675 0.675 fondo),
-    Translate 0 (50) (Scale 0.9 0.9 logo),
+    Translate 0 0 (Scale 0.675 0.675 fondoMenu),
+    Translate 0 (50) (Scale 0.9 0.9 logoCanowars),
     Translate 0 (-75) (Scale 0.25 0.25 texto)
   ]
 
-fondo :: Picture
-fondo = unsafePerformIO $ loadBMP "assets/fondos/War1/Pale/War.bmp"
+fondoMenu :: Picture
+fondoMenu = unsafePerformIO $ loadBMP "assets/fondos/mapa1_2.bmp"
 
-logo :: Picture
-logo = unsafePerformIO $ loadBMP "assets/ui/logo.bmp"
+logoCanowars :: Picture
+logoCanowars = unsafePerformIO $ loadBMP "assets/ui/logo.bmp"
 
 texto :: Picture
 texto = unsafePerformIO $ loadBMP "assets/ui/pulsa.bmp"

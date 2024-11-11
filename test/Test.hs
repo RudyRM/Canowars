@@ -1,56 +1,39 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
+import Sound.OpenAL
+import Control.Concurrent (forkIO, threadDelay)
+import System.IO (withBinaryFile, IOMode(..), hGetContents)
 
--- Definir el estado del juego
-data GameState = GameState
-  { playerX :: Float  -- Posición del personaje en X
-  , movingLeft :: Bool -- Indica si la tecla de izquierda está presionada
-  , movingRight :: Bool -- Indica si la tecla de derecha está presionada
-  }
+-- Initialize audio
+playBackgroundMusic :: FilePath -> IO ()
+playBackgroundMusic path = do
+    -- Load audio file (e.g., .wav)
+    withBinaryFile path ReadMode $ \handle -> do
+        contents <- hGetContents handle
+        let bufferData = ... -- Parse and decode the audio data here
+        -- Create buffer and source
+        buffer <- genObjectName
+        bufferData buffer $= bufferData
+        source <- genObjectName
+        buffer source $= Just buffer
+        -- Play in a loop
+        loopingMode source $= Looping
+        play [source]
 
--- Configurar el estado inicial del juego
-initialState :: GameState
-initialState = GameState 0 False False
-
--- Tamaño de la ventana
-windowWidth, windowHeight :: Int
-windowWidth = 800
-windowHeight = 600
-
--- Configuración de la ventana
-window :: Display
-window = InWindow "Mi Juego en Haskell" (windowWidth, windowHeight) (10, 10)
-
--- Fondo de la ventana
-background :: Color
-background = white
-
--- Dibujo del estado del juego
-render :: GameState -> Picture
-render state = translate (playerX state) 0 $ color blue $ circleSolid 20
-
--- Función que maneja la entrada del usuario (teclas presionadas)
-handleInput :: Event -> GameState -> GameState
-handleInput (EventKey (SpecialKey KeyRight) Down _ _) state = state { movingRight = True }
-handleInput (EventKey (SpecialKey KeyRight) Up _ _) state = state { movingRight = False }
-handleInput (EventKey (SpecialKey KeyLeft) Down _ _) state = state { movingLeft = True }
-handleInput (EventKey (SpecialKey KeyLeft) Up _ _) state = state { movingLeft = False }
-handleInput _ state = state  -- No cambiar el estado por otros eventos
-
--- Función para actualizar el estado del juego
-update :: Float -> GameState -> GameState
-update _ state =
-  let
-    -- Velocidad de movimiento más lenta (modificado de 10 a 5)
-    speed = 5
-    -- Movimiento solo en el eje X basado en las teclas presionadas
-    dx = if movingRight state then speed else if movingLeft state then -speed else 0
-    -- Calcular la nueva posición, limitando los bordes
-    newX = playerX state + dx
-    -- Limitar la posición para que no se salga de la ventana
-    clampedX = max (-fromIntegral (windowWidth `div` 2) + 20) $ min (fromIntegral (windowWidth `div` 2) - 20) newX
-  in state { playerX = clampedX }
-
--- Función principal para ejecutar el juego
+-- Main game loop (using gloss)
 main :: IO ()
-main = play window background 60 initialState render handleInput update
+main = do
+    -- Start background music in a separate thread
+    _ <- forkIO $ playBackgroundMusic "assets/music/menu.wav"
+    -- Run gloss window
+    play display bgColor fps initialState render handleEvent update
+  where
+    display = InWindow "Game with Background Music" (640, 480) (100, 100)
+    bgColor = white
+    fps = 60
+    initialState = ()
+    render _ = Blank
+    handleEvent _ s = s
+    update _ s = s
