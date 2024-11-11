@@ -26,3 +26,7 @@ data Jugador = Jugador {
     , ladoJugador :: Float
 } deriving (Show, Eq)
 
+data Punto2D a = Punto2D a a deriving Show
+
+instance Functor Punto2D where
+    fmap f (Punto2D x y) = Punto2D (f x) (f y)

@@ -4,7 +4,7 @@ import Disparo
 import System.IO.Unsafe (unsafePerformIO)
 import Data.Maybe (isNothing, fromJust)
 import Graphics.Gloss
-import Tipos (Jugador(..), Proyectil(..), Turno(..))
+import Tipos (Jugador(..), Proyectil(..), Turno(..), Punto2D(..))
 import Imagenes (comb1, comb2, comb3, comb4, comb5, vidp1_1, vidp1_2, vidp1_3, vidp1_4, vidp2_1, vidp2_2, vidp2_3, vidp2_4)
 
 drawCannon :: Turno -> Jugador -> Float -> Float -> Picture
@@ -18,21 +18,11 @@ drawDivider = Translate 0 (-125) (Scale 0.5 0.5 pared)
 pared :: Picture
 pared = unsafePerformIO $ loadBMP "assets/fondos/pared.bmp"
 
-drawFuel :: Jugador -> Float -> Picture
-drawFuel jugador x =
-  let fuelPercentage = (fromIntegral (combustibleJugador jugador) / 100) * 100
-      fuelText = "Fuel: " ++ show (round fuelPercentage) ++ "%"
-  in translate x 320 (scale 0.3 0.3 (color black (text fuelText)))
+drawPoint :: Punto2D Float -> Picture
+drawPoint (Punto2D x y) = Translate x y (Color white (Circle 3))
 
-drawHP:: Jugador -> Float -> Picture
-drawHP jugador x =
-  let hpPercentage = (fromIntegral (vida jugador) / 100) * 100
-      hptext = "HP: " ++ show (round hpPercentage) ++ "%"
-  in translate x 320 (scale 0.3 0.3 (color white (text hptext)))
-
--- Función que dibuja un punto individual
-drawPoint :: (Float, Float) -> Picture
-drawPoint (x, y) = Translate x y (Color white (Circle 3))  -- Usamos un círculo pequeño como punto
+puntosParabolaMapeados :: Jugador -> [Punto2D Float]
+puntosParabolaMapeados selectCanon = map (fmap (* 1)) (puntosParabola (posXJugador selectCanon) (-250) (anguloJugador selectCanon) (ladoJugador selectCanon))
 
 gameDisplay :: Turno -> Jugador -> Jugador -> Picture -> Maybe Proyectil -> Picture
 gameDisplay turno p1Cannon p2Cannon escenario proyectil =
@@ -76,7 +66,7 @@ gameDisplay turno p1Cannon p2Cannon escenario proyectil =
       drawCannon Jugador1 p1Cannon (posXJugador p1Cannon) (-250),
       drawCannon Jugador2 p2Cannon (posXJugador p2Cannon) (-250),
       -- Traza la parábola actual
-      pictures (map drawPoint (puntosParabola (posXJugador selectCanon) (-250) (anguloJugador selectCanon) (if turno == Jugador1 then 1 else (-1)))),
+      pictures (map drawPoint (puntosParabolaMapeados selectCanon)),
       drawDivider,
       Translate (-500) 250 (Scale 4 4 imgCombustibleP1),
       Translate (500) 250 (Scale 4 4 imgCombustibleP2),

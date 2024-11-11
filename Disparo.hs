@@ -1,5 +1,7 @@
 module Disparo where
 
+import Tipos (Punto2D(..))
+
 velocidadInicial :: Float
 velocidadInicial = 100
 
@@ -9,6 +11,6 @@ parabola x anguloInicial puntoInicialX puntoInicialY = puntoInicialY + tan angul
   where
     gravedad = 9.8
 
--- Genera puntos de la parábola a partir de la posición inicial
-puntosParabola :: Float -> Float -> Float -> Float -> [(Float, Float)]
-puntosParabola posX posY anguloInicial lado = [(x, (parabola x anguloInicial posX posY)) | x <- [posX, posX + (10*lado) .. posX + (300*lado)]]
+puntosParabola :: Float -> Float -> Float -> Float -> [Punto2D Float]
+puntosParabola posX posY anguloInicial lado =
+    [Punto2D x (parabola x anguloInicial posX posY) | x <- [posX, posX + (10 * lado) .. posX + (300 * lado)]]
