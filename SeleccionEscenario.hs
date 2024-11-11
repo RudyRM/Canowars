@@ -10,6 +10,7 @@ dibujarSeleccionDeEscenario :: Picture
 dibujarSeleccionDeEscenario = Pictures
   [ 
     Translate 0 0 (Scale 0.675 0.675 fondo)
+  , Translate 0 (250) (Scale 0.9 0.9 texto)
   , Translate (-200) 50 (Scale 0.1 0.1 mapa1)
   , Translate 200 50 (Scale 0.1 0.1 mapa2)
   , Translate (-200) (-200) (Scale 0.1 0.1 mapa3)
@@ -22,3 +23,6 @@ dibujarSeleccionDeEscenario = Pictures
 
 fondo :: Picture
 fondo = unsafePerformIO $ loadBMP "assets/fondos/mapa3_2.bmp"
+
+texto :: Picture
+texto = unsafePerformIO $ loadBMP "assets/ui/selmapa.bmp"
