@@ -10,8 +10,8 @@ data Proyectil = Proyectil {
     anguloIniProyectil :: Float,
     posXProyectil :: Float,
     posYProyectil :: Float,
-    --lado :: Int,
-    spriteProyectil :: Picture
+    spriteProyectil :: Picture,
+    ladoProyectil :: Float
 } deriving (Show, Eq)
 
 data Jugador = Jugador { 
@@ -23,5 +23,6 @@ data Jugador = Jugador {
     , semillaDesvioAngulo :: StdGen
     , semillaCritico :: StdGen
     , textoJugador :: Picture
+    , ladoJugador :: Float
 } deriving (Show, Eq)
 

@@ -29,7 +29,7 @@ main = do
 
 dibujar :: GameState -> Picture
 dibujar Menu = dibujarMenu
-dibujar (SeleccionCanon _ _) = dibujarSeleccionDeCanon
+dibujar (SeleccionCanon jugador _) = dibujarSeleccionDeCanon jugador
 dibujar (SeleccionEscenario _ _) = dibujarSeleccionDeEscenario
 dibujar (InGame turno canonP1 canonP2 escenario proyectilJugador movimiento) = gameDisplay turno canonP1 canonP2 escenario proyectilJugador
 dibujar (PantallaFinal ganador) = dibujarPantallaFinal ganador
@@ -38,9 +38,9 @@ dibujar (PantallaFinal ganador) = dibujarPantallaFinal ganador
 anguloRandom :: Float -> Float -> StdGen -> (Float, StdGen)
 anguloRandom angulo beta semilla = (angulo + randomOffset, nuevaSemilla)
   where
-    -- Generamos un valor aleatorio dentro del rango usando la semilla actual
     (randomOffset, nuevaSemilla) = randomR ((-beta), beta) semilla
 
+-- Devuelve el daño con probabilidad de crítico y la semilla actualizada
 danoRandom :: StdGen -> (Int, StdGen)
 danoRandom semilla =
   if probabilidad < 0.2
@@ -63,23 +63,23 @@ manejarInput (EventKey (Char 'q') Down _ _) (PantallaFinal _) = Menu
 
 -- Selección de cañon del jugador 1
 manejarInput (EventKey (Char '1') Down _ _) (SeleccionCanon Jugador1 _) = 
-  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, spriteJugador = tanque1, textoJugador = jugador1})
+  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, ladoJugador = 1, spriteJugador = tanque1, textoJugador = jugador1})
 manejarInput (EventKey (Char '2') Down _ _) (SeleccionCanon Jugador1 _) = 
-  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, spriteJugador = tanque2, textoJugador = jugador1})
+  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, ladoJugador = 1, spriteJugador = tanque2, textoJugador = jugador1})
 manejarInput (EventKey (Char '3') Down _ _) (SeleccionCanon Jugador1 _) = 
-  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, spriteJugador = tanque3, textoJugador = jugador1})
+  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, ladoJugador = 1, spriteJugador = tanque3, textoJugador = jugador1})
 manejarInput (EventKey (Char '4') Down _ _) (SeleccionCanon Jugador1 _) = 
-  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, spriteJugador = tanque4, textoJugador = jugador1})
+  SeleccionCanon Jugador2 (Just Jugador { vida = 100, combustibleJugador = 200, anguloJugador = 1, semillaDesvioAngulo = mkStdGen 1, semillaCritico = mkStdGen 1, posXJugador = -350, ladoJugador = 1, spriteJugador = tanque4, textoJugador = jugador1})
 
 -- Selección de cañon del jugador 2
 manejarInput (EventKey (Char '1') Down _ _) (SeleccionCanon Jugador2 (Just canonP1)) = 
-  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, spriteJugador = tanque1, textoJugador = jugador2})
+  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, ladoJugador = -1, spriteJugador = tanque1, textoJugador = jugador2})
 manejarInput (EventKey (Char '2') Down _ _) (SeleccionCanon Jugador2 (Just canonP1)) = 
-  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, spriteJugador = tanque2, textoJugador = jugador2})
+  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, ladoJugador = -1, spriteJugador = tanque2, textoJugador = jugador2})
 manejarInput (EventKey (Char '3') Down _ _) (SeleccionCanon Jugador2 (Just canonP1)) = 
-  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, spriteJugador = tanque3, textoJugador = jugador2})
+  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, ladoJugador = -1, spriteJugador = tanque3, textoJugador = jugador2})
 manejarInput (EventKey (Char '4') Down _ _) (SeleccionCanon Jugador2 (Just canonP1)) = 
-  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, spriteJugador = tanque4, textoJugador = jugador2})
+  SeleccionEscenario canonP1 (Jugador { vida = 100, combustibleJugador = 200, anguloJugador = -1, semillaDesvioAngulo = mkStdGen 2, semillaCritico = mkStdGen 2, posXJugador = 350, ladoJugador = -1, spriteJugador = tanque4, textoJugador = jugador2})
 
 -- Selección de escenarios
 manejarInput (EventKey (Char '1') Down _ _) (SeleccionEscenario canonP1 canonP2) = 
@@ -135,6 +135,7 @@ manejarInput (EventKey (SpecialKey KeySpace) Down _ _) (InGame turno canonP1 can
     nuevoCannonP2 = if turno == Jugador1 then canonP2 {combustibleJugador = 200} else canonP2
   in InGame siguienteTurno nuevoCannonP1 nuevoCannonP2 escenario proyectilJugador (False, False, False, False)
 
+-- Manejo del disparo y creación del proyectil solo si se tiene el combustible suficiente
 manejarInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame turno canonP1 canonP2 escenario Nothing _) =
   let 
     canonGatillador = if turno == Jugador1 then canonP1 else canonP2
@@ -145,12 +146,13 @@ manejarInput (EventKey (SpecialKey KeyEnter) Down _ _) (InGame turno canonP1 can
     nuevoCannonP2 = if turno == Jugador2 then canonP2 { semillaDesvioAngulo = semillaNuevaAngulo, semillaCritico = semillaNuevaCritico, combustibleJugador = if nuevoCombustible >= 0 then nuevoCombustible else (combustibleJugador canonGatillador)} else canonP2
     proyectil = 
       (Just (Proyectil { 
-        dañoProyectil = dañoProyectil, 
+        dañoProyectil = dañoProyectil,
         posIniXProyectil = (posXJugador canonGatillador),
         anguloIniProyectil = angulo,
         posXProyectil = (posXJugador canonGatillador), 
         posYProyectil = (-250), 
-        spriteProyectil = if dañoProyectil < 4 then imgProyectil else imgProyectilCritico
+        spriteProyectil = if dañoProyectil < 4 then imgProyectil else imgProyectilCritico,
+        ladoProyectil = ladoJugador canonGatillador
       }))
   in
     if nuevoCombustible >= 0 then
@@ -168,18 +170,24 @@ movimientoDerecha :: Turno -> Float -> Float
 movimientoDerecha Jugador1 posXJugador = min (-80) (posXJugador + 5)
 movimientoDerecha Jugador2 posXJugador = min (600) (posXJugador + 5)
 
--- Actualización del estado del juego
+-- Actualización del estado del juego.
+-- Se identifican todas las variaciones a tiempo real posibles y se actualizan, como:
+-- Cambio del ángulo del cañón
+-- Cambio de la posición del cañón
+-- Nuevo combustible
+-- Posición del proyectil disparado
+-- Caso de impacto con otro cañón
 actualizar :: Float -> GameState -> GameState
 actualizar _ (InGame turno canonP1 canonP2 escenario proyectil (upPressed, downPressed, leftPressed, rightPressed)) =
   let 
     siguienteTurno = if turno == Jugador1 then Jugador2 else Jugador1
     canonJugando = if turno == Jugador1 then canonP1 else canonP2
     canonEstatico = if turno == Jugador1 then canonP2 else canonP1
-    lado = if turno == Jugador1 then 1 else (-1)
+    ladoCanon = ladoJugador canonJugando
 
     -- Actualizar el ángulo y posición de canonP1
-    nuevoAngulo = if upPressed then anguloJugador canonJugando + 0.01*lado
-                  else if downPressed then anguloJugador canonJugando - 0.01*lado
+    nuevoAngulo = if upPressed then anguloJugador canonJugando + 0.01*ladoCanon
+                  else if downPressed then anguloJugador canonJugando - 0.01*ladoCanon
                   else anguloJugador canonJugando
 
     nuevaPosX = if leftPressed then movimientoIzquierda turno (posXJugador canonJugando)
@@ -196,14 +204,14 @@ actualizar _ (InGame turno canonP1 canonP2 escenario proyectil (upPressed, downP
       Just p | posYProyectil p >= -250 
             , not (posXProyectil p >= -55 && posXProyectil p <= 55 && posYProyectil p >= -250 && posYProyectil p <= 30) ->
                 Just p { 
-                  posXProyectil = (posXProyectil p + (2*lado) + (abs (posXProyectil p)) * 0.01 * lado),
+                  posXProyectil = (posXProyectil p + (2*(ladoProyectil p)) + (abs (posXProyectil p)) * 0.01 * (ladoProyectil p)),
                   posYProyectil = parabola (posXProyectil p) (anguloIniProyectil p) (posIniXProyectil p) (-250)
                 }
       _ -> Nothing
 
     -- Verificar si el proyectil impacta el canonEstatico
     canonImpactado = case nuevoProyectil of
-      Just p | posXProyectil p >= (posXJugador canonEstatico - 50) && posXProyectil p <= (posXJugador canonEstatico + 50) && posYProyectil p <= (-240) -> canonEstatico { vida = max 0 (vida canonEstatico - (dañoProyectil p)) }
+      Just p | posXProyectil p >= (posXJugador canonEstatico - 50) && posXProyectil p <= (posXJugador canonEstatico + 50) && posYProyectil p <= (-240) -> canonEstatico { vida = max 0 (vida canonEstatico - ((dañoProyectil p)*3)) }
       _ -> canonEstatico
 
     (nuevoCannonP1, nuevoCannonP2) = if turno == Jugador1 then (nuevoCanonJugando, canonImpactado) else (canonImpactado, nuevoCanonJugando)

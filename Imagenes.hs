@@ -21,6 +21,24 @@ num3 = unsafePerformIO $ loadBMP "assets/ui/num3.bmp"
 num4 :: Picture
 num4 = unsafePerformIO $ loadBMP "assets/ui/num4.bmp"
 
+vidp1_1 :: Picture
+vidp1_1 = unsafePerformIO $ loadBMP "assets/ui/vidp1_1.bmp"
+vidp1_2 :: Picture
+vidp1_2 = unsafePerformIO $ loadBMP "assets/ui/vidp1_2.bmp"
+vidp1_3 :: Picture
+vidp1_3 = unsafePerformIO $ loadBMP "assets/ui/vidp1_3.bmp"
+vidp1_4 :: Picture
+vidp1_4 = unsafePerformIO $ loadBMP "assets/ui/vidp1_4.bmp"
+
+vidp2_1 :: Picture
+vidp2_1 = unsafePerformIO $ loadBMP "assets/ui/vidp2_1.bmp"
+vidp2_2 :: Picture
+vidp2_2 = unsafePerformIO $ loadBMP "assets/ui/vidp2_2.bmp"
+vidp2_3 :: Picture
+vidp2_3 = unsafePerformIO $ loadBMP "assets/ui/vidp2_3.bmp"
+vidp2_4 :: Picture
+vidp2_4 = unsafePerformIO $ loadBMP "assets/ui/vidp2_4.bmp"
+
 comb1 :: Picture
 comb1 = unsafePerformIO $ loadBMP "assets/ui/comb1.bmp"
 comb2 :: Picture
